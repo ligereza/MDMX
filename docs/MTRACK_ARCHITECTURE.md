@@ -122,7 +122,7 @@ BeamHit(fixture=17, xyz=(...), confidence=.84)
 CalibrationModel(fixture=17, ...)
 ```
 
-It does not output DMX directly. The MDMX compiler decides how those facts affect fixtures.
+It does not output DMX directly and it does not invent a parallel semantic language. MTRACK publishes these observations to the shared X-ANALOGIA-X world model; that common engine decides whether they calibrate/refute a model or become part of an abstract control intention. Only then can the MDMX backend lower the validated intention to SemanticFrame/DMX.
 
 ## Safety / determinism
 
@@ -143,4 +143,5 @@ It does not output DMX directly. The MDMX compiler decides how those facts affec
 7. digital-twin prediction vs camera residual;
 8. learned correction model;
 9. live tracking target;
-10. integration with MDMX semantic operators.
+10. integration with the shared X-ANALOGIA-X ontology/DSL;
+11. lowering validated abstract operations through the MDMX backend.
