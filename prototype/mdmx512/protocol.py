@@ -22,11 +22,10 @@ FRAME_SIZE = 512
 HEADER_SIZE = 16
 LANE_SIZE = 16
 LANE_COUNT = 31
-MAGIC = b"MDMX"
 VERSION = 1
 PROFILE = 1
 
-FLAG_ARMED = 0x01
+ARMED_VALUE = 0xFF
 LANE_REVERSE = 0x01
 
 
@@ -155,12 +154,11 @@ def encode_frame(
         raise ProtocolError(f"maximum {LANE_COUNT} lanes")
 
     out = bytearray(FRAME_SIZE)
-    out[0:4] = MAGIC
-    out[4] = VERSION
-    out[5] = PROFILE
-    out[6] = FLAG_ARMED if armed else 0
-    out[7] = bank & 0xFF
-    put_u16be(out, 8, global_master)
+    out[0] = ARMED_VALUE if armed else 0
+    out[1] = VERSION
+    out[2] = PROFILE
+    out[3] = bank & 0xFF
+    put_u16be(out, 4, global_master)
 
     for index, lane in enumerate(lanes):
         start = HEADER_SIZE + index * LANE_SIZE
@@ -172,9 +170,7 @@ def encode_frame(
 def decode_frame(data: bytes | bytearray) -> ControlFrame:
     if len(data) != FRAME_SIZE:
         raise ProtocolError("MDMX512 requires exactly 512 slots")
-    if bytes(data[0:4]) != MAGIC:
-        raise ProtocolError("bad MDMX512 magic")
-    if data[4] != VERSION or data[5] != PROFILE:
+    if data[1] != VERSION or data[2] != PROFILE:
         raise ProtocolError("unsupported MDMX512 version/profile")
 
     lanes = []
@@ -184,9 +180,9 @@ def decode_frame(data: bytes | bytearray) -> ControlFrame:
         lanes.append(lane)
 
     return ControlFrame(
-        armed=bool(data[6] & FLAG_ARMED),
-        bank=data[7],
-        global_master=u16be(data, 8),
+        armed=data[0] >= 128,
+        bank=data[3],
+        global_master=u16be(data, 4),
         lanes=tuple(lanes),
     )
 
