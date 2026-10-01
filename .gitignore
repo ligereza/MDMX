@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+cmake-build-*/
+.DS_Store
+
+# Generated development fixtures are reproducible.
+fixtures/development/*.bin
+fixtures/development/manifest.json
