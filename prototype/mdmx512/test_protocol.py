@@ -29,6 +29,24 @@ def ten_fixture_rig() -> Rig:
     return Rig(fixtures=fixtures, groups={1: tuple(ids)})
 
 
+def two_universe_rig() -> Rig:
+    fixtures = {}
+    ids = []
+    for i in range(12):
+        fixture_id = i + 1
+        ids.append(fixture_id)
+        universe = 1 if i < 6 else 2
+        local = i if i < 6 else i - 6
+        fixtures[fixture_id] = Fixture(
+            fixture_id=fixture_id,
+            universe=universe,
+            address=1 + local * 51,
+            footprint=51,
+            channels={Attribute.DIMMER: ChannelDef(offset=0, bits=8)},
+        )
+    return Rig(fixtures=fixtures, groups={7: tuple(ids)})
+
+
 class MDMX512Tests(unittest.TestCase):
     def test_512_byte_frame_round_trip(self):
         lane = Lane(
@@ -62,6 +80,23 @@ class MDMX512Tests(unittest.TestCase):
 
         slots = [universe[i * 51] for i in range(10)]
         self.assertEqual(slots, [0, 28, 57, 85, 113, 142, 170, 198, 227, 255])
+
+    def test_one_lane_can_span_multiple_output_universes(self):
+        lane = Lane(
+            enabled=True,
+            opcode=Opcode.RAMP,
+            attribute=Attribute.DIMMER,
+            flags=0,
+            target_group=7,
+            p0=0,
+            p1=65535,
+        )
+        output = expand(decode_frame(encode_frame([lane])), two_universe_rig())
+        self.assertEqual(set(output), {1, 2})
+        values = [output[1][i * 51] for i in range(6)] + [output[2][i * 51] for i in range(6)]
+        self.assertEqual(values[0], 0)
+        self.assertEqual(values[-1], 255)
+        self.assertTrue(all(a <= b for a, b in zip(values, values[1:])))
 
     def test_global_master_scales_derived_dimmer(self):
         lane = Lane(
