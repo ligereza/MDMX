@@ -20,6 +20,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run MTRACK tests
+        working-directory: mtrack/python/tests
         env:
-          PYTHONPATH: mtrack/python
-        run: python -m unittest -v mtrack/python/tests/test_mtrack.py
+          PYTHONPATH: ..
+        run: python -m unittest -v test_mtrack.py
