@@ -25,7 +25,7 @@ LANE_COUNT = 31
 VERSION = 1
 PROFILE = 1
 
-ARMED_VALUE = 0xFF
+ARMED_THRESHOLD = 128
 LANE_REVERSE = 0x01
 
 
@@ -46,6 +46,27 @@ class Attribute(IntEnum):
     BLUE = 6
     WHITE = 7
     ZOOM = 8
+
+
+_OPCODE_CANONICAL = {
+    Opcode.OFF: 0,
+    Opcode.SET: 64,
+    Opcode.RAMP: 128,
+    Opcode.WAVE: 192,
+}
+
+_ATTRIBUTE_RANGES = (
+    (0, 27, Attribute.NONE),
+    (28, 55, Attribute.DIMMER),
+    (56, 83, Attribute.PAN),
+    (84, 111, Attribute.TILT),
+    (112, 139, Attribute.RED),
+    (140, 167, Attribute.GREEN),
+    (168, 195, Attribute.BLUE),
+    (196, 223, Attribute.WHITE),
+    (224, 255, Attribute.ZOOM),
+)
+_ATTRIBUTE_CANONICAL = {attribute: lo for lo, _hi, attribute in _ATTRIBUTE_RANGES}
 
 
 @dataclass(frozen=True)
@@ -105,11 +126,22 @@ def put_u16be(data: bytearray, offset: int, value: int) -> None:
     data[offset + 1] = value & 0xFF
 
 
+def _decode_opcode(raw: int) -> Opcode:
+    return Opcode(min(raw // 64, 3))
+
+
+def _decode_attribute(raw: int) -> Attribute:
+    for lo, hi, attribute in _ATTRIBUTE_RANGES:
+        if lo <= raw <= hi:
+            return attribute
+    raise ProtocolError(f"invalid attribute byte: {raw}")
+
+
 def encode_lane(lane: Lane) -> bytes:
     out = bytearray(LANE_SIZE)
     out[0] = 255 if lane.enabled else 0
-    out[1] = int(lane.opcode)
-    out[2] = int(lane.attribute)
+    out[1] = _OPCODE_CANONICAL[lane.opcode]
+    out[2] = _ATTRIBUTE_CANONICAL[lane.attribute]
     out[3] = lane.flags & 0xFF
     put_u16be(out, 4, lane.target_group)
     for offset, value in zip(
@@ -123,16 +155,11 @@ def encode_lane(lane: Lane) -> bytes:
 def decode_lane(data: bytes | bytearray) -> Lane:
     if len(data) != LANE_SIZE:
         raise ProtocolError("lane must be exactly 16 bytes")
-    try:
-        opcode = Opcode(data[1])
-        attribute = Attribute(data[2])
-    except ValueError as exc:
-        raise ProtocolError(str(exc)) from exc
 
     return Lane(
-        enabled=data[0] >= 128,
-        opcode=opcode,
-        attribute=attribute,
+        enabled=data[0] >= ARMED_THRESHOLD,
+        opcode=_decode_opcode(data[1]),
+        attribute=_decode_attribute(data[2]),
         flags=data[3],
         target_group=u16be(data, 4),
         p0=u16be(data, 6),
@@ -154,7 +181,7 @@ def encode_frame(
         raise ProtocolError(f"maximum {LANE_COUNT} lanes")
 
     out = bytearray(FRAME_SIZE)
-    out[0] = ARMED_VALUE if armed else 0
+    out[0] = 255 if armed else 0
     out[1] = VERSION
     out[2] = PROFILE
     out[3] = bank & 0xFF
@@ -180,7 +207,7 @@ def decode_frame(data: bytes | bytearray) -> ControlFrame:
         lanes.append(lane)
 
     return ControlFrame(
-        armed=data[0] >= 128,
+        armed=data[0] >= ARMED_THRESHOLD,
         bank=data[3],
         global_master=u16be(data, 4),
         lanes=tuple(lanes),
