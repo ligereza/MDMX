@@ -38,6 +38,7 @@ class Opcode(IntEnum):
 
 
 class Attribute(IntEnum):
+    NONE = 0
     DIMMER = 1
     PAN = 2
     TILT = 3
