@@ -23,4 +23,4 @@ jobs:
         working-directory: mtrack/python/tests
         env:
           PYTHONPATH: ..
-        run: python -m unittest -v test_mtrack.py
+        run: python -m unittest discover -v -s . -p 'test_*.py'
