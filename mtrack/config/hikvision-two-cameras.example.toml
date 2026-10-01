@@ -1,0 +1,36 @@
+# MTRACK two-camera Hikvision lab.
+# Credentials intentionally do NOT live in this file.
+#
+# Set:
+#   MTRACK_CAM_A_USER
+#   MTRACK_CAM_A_PASS
+#   MTRACK_CAM_B_USER
+#   MTRACK_CAM_B_PASS
+
+[[camera]]
+id = "cam-a"
+host = "192.168.1.201"
+credential_env_prefix = "MTRACK_CAM_A"
+channel = 1
+stream = "sub"
+rtsp_port = 554
+onvif_port = 80
+transport = "tcp"
+camera_role = "fixed"
+stream_role = "analysis"
+max_frame_age_ms = 500
+retain_derived_observations = true
+
+[[camera]]
+id = "cam-b"
+host = "192.168.1.202"
+credential_env_prefix = "MTRACK_CAM_B"
+channel = 1
+stream = "sub"
+rtsp_port = 554
+onvif_port = 80
+transport = "tcp"
+camera_role = "fixed"
+stream_role = "analysis"
+max_frame_age_ms = 500
+retain_derived_observations = true
