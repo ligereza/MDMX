@@ -1,0 +1,39 @@
+name: core-tests
+
+on:
+  push:
+    paths:
+      - 'host/**'
+      - 'firmware/rp2040/**'
+      - 'firmware/tests/**'
+      - 'tools/**'
+      - '.github/workflows/core-tests.yml'
+  pull_request:
+    paths:
+      - 'host/**'
+      - 'firmware/rp2040/**'
+      - 'firmware/tests/**'
+      - 'tools/**'
+
+jobs:
+  host-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s host/tests -v
+      - name: Generate development fixtures
+        run: python tools/generate_dev_fixtures.py
+
+  protocol-c:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile native protocol test
+        run: |
+          gcc -std=c11 -Wall -Wextra -Werror             -Ifirmware/rp2040/include             firmware/rp2040/src/mdmx_protocol.c             firmware/tests/test_protocol_native.c             -o /tmp/mdmx_protocol_test
+      - name: Run native protocol test
+        run: /tmp/mdmx_protocol_test
