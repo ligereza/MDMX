@@ -82,3 +82,24 @@ The long-term object is not "a camera followspot". It is a learned world/fixture
 - can this visual result be represented by a lower-dimensional rule?
 - how confident are we in the prediction?
 - what would produce a desired spatial/visual state?
+
+## Additional research pass — adoption matrix
+
+| Source | Concept retained | Limit / license handling |
+|---|---|---|
+| SlyLED | multicamera fusion, beam calibration, point-cloud/world-space thinking | PolyForm Noncommercial: architecture only, clean-room implementation |
+| Följe | calibrated tracking polygon, floor as stable depth reference, Delaunay-style interpolation concept | CC BY-NC-ND: no code reuse/derivative implementation copied |
+| DMX Followspot | preserve normal DMX and override only Pan/Tilt when tracking owns them | Apache-2.0, but current MTRACK authority code is independently implemented |
+| Fly My Fixtures | fan-out and synchronized multi-fixture motion concepts | repository had no LICENSE file when reviewed: ideas only, no source copying |
+| NVIDIA AutoMagicCalib | trajectories as natural calibration evidence; intrinsic/extrinsic separation; bundle-adjustment workflow | repo Apache-2.0, some runtime components have separate/proprietary notices; MTRACK uses only architectural ideas |
+| PTZ-Calib (ICRA 2025) | offline reference calibration + online relocalization after PTZ viewpoint changes | GPLv3: research concept only unless compatibility is reviewed |
+| generic pan/tilt robotics trackers | temporal estimation, dead zones, explicit lag/parallax limits | standard control concepts; no implementation copied |
+
+### New design consequences
+
+- fixed CCTV cameras can use long-lived extrinsic calibration;
+- PTZ CCTV cameras require lens/zoom/pose state as part of calibration identity;
+- camera movement invalidates or relocalizes calibration rather than silently continuing;
+- passive calibration may use normal venue motion as evidence, but only derived ephemeral tracks need be retained;
+- MTRACK tracks geometry/targets, not personal identity;
+- per-attribute authority allows tracking to coexist with an external lighting desk.
