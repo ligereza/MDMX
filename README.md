@@ -1,6 +1,6 @@
 # MDMX
 
-MDMX es la capa física/determinista de salida DMX del proyecto: recibe universos ya resueltos por la capa semántica y los emite como DMX real sin reinterpretarlos.
+MDMX es la capa física/determinista de salida DMX del proyecto. La capa semántica común es **X-ANALOGIA-X**: MDMX actúa como backend físico de su ontología/DSL y emite DMX real sin reinterpretar esa intención dentro del MCU.
 
 ## Arquitectura canónica
 
@@ -44,6 +44,8 @@ El siguiente límite del proyecto es físico: reconstruir/implementar el firmwar
 
 - [Estado canónico](STATUS.md)
 - [Arquitectura](docs/ARCHITECTURE.md)
+- [Integración canónica X-ANALOGIA-X ↔ MDMX ↔ MTRACK](docs/XANALOGIA_INTEGRATION.md)
+- [MTRACK: percepción/cámara/3D](docs/MTRACK_ARCHITECTURE.md)
 - [FRAMESET_V1](docs/FRAMESET_V1.md)
 - [Host USB CDC](host/README.md)
 - [Firmware RP2040](firmware/README.md)
