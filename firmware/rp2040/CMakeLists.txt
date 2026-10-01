@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.13)
 add_library(mdmx_core STATIC
     src/mdmx_protocol.c
     src/mdmx_state.c
+    src/mdmx_ingest.c
 )
 
 target_include_directories(mdmx_core PUBLIC
