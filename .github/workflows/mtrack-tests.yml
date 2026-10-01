@@ -1,0 +1,25 @@
+name: mtrack-tests
+
+on:
+  push:
+    branches: [MTRACK]
+    paths:
+      - 'mtrack/**'
+      - 'docs/MTRACK_*.md'
+      - '.github/workflows/mtrack-tests.yml'
+  pull_request:
+    paths:
+      - 'mtrack/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run MTRACK tests
+        env:
+          PYTHONPATH: mtrack/python
+        run: python -m unittest -v mtrack/python/tests/test_mtrack.py
