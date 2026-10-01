@@ -1,0 +1,32 @@
+{
+  "contract": "FRAMESET_V1/v0.5-2068",
+  "status": "frozen-identities-only",
+  "warning": "Blob bytes are not present in this repository yet. Do not regenerate and relabel as historical fixtures unless SHA-256 matches exactly.",
+  "fixtures": [
+    {
+      "name": "golden-1.bin",
+      "sequence": 1,
+      "sha256": "6d5ebd58e7ee4f9ee7a64fe28d50c4c53db1707ca9ae23d1752e1c8b1619cbb0",
+      "stored_crc_hex": "854D156B"
+    },
+    {
+      "name": "golden-2.bin",
+      "sequence": 2,
+      "sha256": "134317a20c96d4b2c4f686743a208e45ea235ebede0f0e06592604974a5d558a",
+      "stored_crc_hex": "1E5741CF"
+    },
+    {
+      "name": "golden-3.bin",
+      "sequence": 3,
+      "sha256": "ae3a1dee5d1f36a26f3cec99afb215368a646ca347ac2bdf83218cda6a1cbe0c",
+      "stored_crc_hex": "67EE8D41"
+    },
+    {
+      "name": "corrupt-out1-seq2.bin",
+      "derived_from": "golden-2.bin",
+      "mutation": "byte[16] ^= 0x01; stored CRC unchanged",
+      "sha256": "90754445b5240317abc8a7cd261bf56c1d604a3f116e5b0c3801d4340a85df68",
+      "expected_status": "ERR_CRC"
+    }
+  ]
+}
