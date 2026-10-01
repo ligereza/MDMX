@@ -21,6 +21,7 @@ from .evidence import PassiveCalibrationBuffer, PassiveCalibrationSample
 from .quality import ConfidenceInputs, effective_confidence
 from .calibration_state import CalibrationRecord, CalibrationState
 from .sync import SyncWindow, synchronize_observations
+from .triangulation import TriangulationResult, triangulate_rays
 
 __all__ = [
     "Vec3",
@@ -56,4 +57,6 @@ __all__ = [
     "CalibrationState",
     "SyncWindow",
     "synchronize_observations",
+    "TriangulationResult",
+    "triangulate_rays",
 ]
