@@ -2,6 +2,8 @@ from .model import Vec3, Observation3D, CalibrationPoint, Residual
 from .fusion import fuse_observations
 from .lightmap import LightMap
 from .feedback import residual
+from .sources import ObservationSource, PrivacyPolicy, SourceKind
+from .hikvision import HikvisionCamera
 
 __all__ = [
     "Vec3",
@@ -11,4 +13,8 @@ __all__ = [
     "fuse_observations",
     "LightMap",
     "residual",
+    "ObservationSource",
+    "PrivacyPolicy",
+    "SourceKind",
+    "HikvisionCamera",
 ]
