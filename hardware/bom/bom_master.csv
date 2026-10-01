@@ -1,0 +1,11 @@
+ref,category,part_or_function,qty_out1,qty_out4,required,selection_state,critical_requirements,notes
+MCU1,controller,RP2040 development board,1,1,yes,pending-purchase,USB device support; enough GPIO; Pico SDK compatible,One MCU drives four outputs
+ISO1-4,isolation,Digital isolator channel for DMX TX,1,4,yes,pending-selection,3.3V logic compatible; propagation suitable for 250 kbaud,Isolation must be per output
+PHY1-4,transceiver,RS-485 transceiver,1,4,yes,pending-selection,250 kbaud+; 3.3V-side compatibility; driver enable strategy,Do not buy generic module without checking topology
+PWRISO1-4,power,Isolated DC-DC supply,1,4,yes,pending-selection,Isolation rating matched to channel; adequate current,Needed for genuine galvanic isolation
+TVS1-4,protection,RS-485/DMX TVS protection,1,4,yes,pending-selection,Bus-compatible capacitance and standoff,Final value depends on transceiver and supply
+RTERM,bench,120 ohm termination resistor,1,1,yes,pending-purchase,120 ohm; suitable tolerance,For bench end-of-line testing; not fixed inside every output
+XLR1-4,connector,XLR-5 female panel connector,1,4,yes,pending-purchase,DMX pinout compatible,Final enclosure choice may change footprint
+USB1,cable,USB data cable,1,1,yes,pending-purchase,Data-capable not charge-only,Host to RP2040
+PROTO,prototype,Breadboard/perfboard and wiring set,1,1,yes,pending-purchase,Short signal paths; safe power distribution,OUT1 validation before replication
+LOGIC,measurement,Logic analyzer or oscilloscope access,1,1,yes,verify-availability,Measure BREAK/MAB/slot timing,Can be existing lab equipment
