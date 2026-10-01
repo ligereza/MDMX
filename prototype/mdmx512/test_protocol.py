@@ -1,4 +1,6 @@
 import unittest
+from pathlib import Path
+import xml.etree.ElementTree as ET
 
 from protocol import (
     Attribute,
@@ -11,6 +13,9 @@ from protocol import (
     encode_frame,
     expand,
 )
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def ten_fixture_rig() -> Rig:
@@ -110,6 +115,23 @@ class MDMX512Tests(unittest.TestCase):
         frame = decode_frame(encode_frame([lane], global_master=32768))
         output = expand(frame, ten_fixture_rig())
         self.assertTrue(all(output[1][i * 51] in (127, 128) for i in range(10)))
+
+    def test_avolites_personality_is_well_formed_and_has_expected_modes(self):
+        path = ROOT / "fixtures" / "avolites" / "MDMX_MDMX512_EXPERIMENTAL.d4"
+        root = ET.parse(path).getroot()
+        self.assertEqual(root.attrib["Name"], "MDMX512")
+
+        modes = {m.attrib["Name"]: m for m in root.findall("Mode")}
+        self.assertIn("64 DMX (3 lanes)", modes)
+        self.assertIn("128 DMX (7 lanes)", modes)
+        self.assertIn("256 DMX (15 lanes)", modes)
+        self.assertIn("512 DMX (31 lanes)", modes)
+        self.assertIn("Lane", modes)
+
+        cells = modes["512 DMX (31 lanes)"].find("Cells").findall("Cell")
+        self.assertEqual(len(cells), 31)
+        self.assertEqual(cells[0].attrib["ChannelOffset"], "17")
+        self.assertEqual(cells[-1].attrib["ChannelOffset"], "497")
 
 
 if __name__ == "__main__":
